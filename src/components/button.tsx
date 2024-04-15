@@ -10,7 +10,7 @@ export function Button({ title, isLoading = false, ...rest }: Props) {
     <TouchableOpacity
       activeOpacity={0.7}
       disabled={isLoading}
-      className="w-full h-14 bg-purple-500 items-center justify-center rounded-2xl"
+      className="min-w-32 h-14 bg-primary-500 items-center justify-center rounded-2xl"
     >
       {isLoading ? (
         <ActivityIndicator className="text-white" />

@@ -8,7 +8,7 @@ export const colors = {
   yellow: '#FFCC37',
   blue: '#461D8D',
 
-  purple: {
+  primary: {
     100: '#D9D0E9',
     400: '#B566F2',
     500: '#8947EF',
