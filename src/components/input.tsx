@@ -3,9 +3,9 @@ import { ReactNode } from "react";
 
 import { TextInput, View, TextInputProps } from "react-native";
 
-function Input({children}: { children: ReactNode}) {
+function Input({children, style}: { children: ReactNode, style: string}) {
   return (
-    <View className="min-w-64 h-14 flex-row items-center gap-3 p-3 border border-primary-500 rounded-xl my-4">
+    <View className={`h-14 min-w-64 flex-row items-center gap-3 p-3 border border-primary-500 rounded-xl my-4 ${style}`}>
       {children}
     </View>
   )

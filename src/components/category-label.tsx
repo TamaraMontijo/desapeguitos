@@ -8,7 +8,7 @@ type CategoryProps = PressableProps & {
 
 export function CategoryLabel({ title, isSelected, ...rest }: CategoryProps) {
   return (
-    <Pressable className={clsx("", isSelected && "border-b-4 border-blue")} {...rest}>
+    <Pressable className={clsx("", isSelected && "border-b-4 border-yellow")} {...rest}>
       <Text className="font-nunitoBold color-dark text-xl">{title}</Text>
     </Pressable>
   )

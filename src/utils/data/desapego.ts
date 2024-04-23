@@ -1,5 +1,5 @@
 const DESAPEGO = [{
-  id: 1,
+  id: "1",
   type: 'venda',
   price: 500,
   title: 'Berço americano',
@@ -10,8 +10,9 @@ const DESAPEGO = [{
   thumbnail: require("../../assets/desapegos/thumbnail/1.png"),
 },
 {
-  id: 2,
+  id: "2",
   type: 'troca',
+  price: 0,
   itensToChange: 'Fraldas',
   title: 'Camiseta Adidas',
   description: 'Berço americano branco, com colchão + 3 lençóis de elástico. Com marcas de uso',
@@ -21,8 +22,9 @@ const DESAPEGO = [{
   thumbnail: require("../../assets/desapegos/thumbnail/2.png"),
 },
 {
-  id: 2,
+  id: "3",
   type: 'troca',
+  price: 0,
   itensToChange: 'Fraldas',
   title: 'Camiseta Adidas',
   description: 'Berço americano branco, com colchão + 3 lençóis de elástico. Com marcas de uso',
@@ -32,8 +34,9 @@ const DESAPEGO = [{
   thumbnail: require("../../assets/desapegos/thumbnail/2.png"),
 },
 {
-  id: 2,
+  id: "4",
   type: 'troca',
+  price: 0,
   itensToChange: 'Fraldas',
   title: 'Camiseta Adidas',
   description: 'Berço americano branco, com colchão + 3 lençóis de elástico. Com marcas de uso',
