@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, FlatList} from "react-native";
 import { Search } from "lucide-react-native";
-import { Link } from "expo-router";
+import { Link, LinkProps } from "expo-router";
 
 
 import { colors } from "@/styles/colors";
@@ -12,15 +12,13 @@ import { Button } from "@/components/button";
 import { CategoryLabel } from "@/components/category-label";
 import { Card } from "@/components/card";
 
-import {ANDROID_CLIENT_ID, IOS_CLIENT_ID} from '@env';
-
 export default function Home() {
-  console.log(ANDROID_CLIENT_ID)
   const [category, setCategory] = useState(CATEGORIES[0]);
 
   function handleCategorySelect(selectedCategory: string) {
     setCategory(selectedCategory);
   }
+  
 
   return (
     <View className="p-2">

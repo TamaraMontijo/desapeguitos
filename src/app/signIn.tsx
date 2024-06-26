@@ -1,39 +1,46 @@
-import { Alert, Text } from "react-native";
-import { GoogleSignin } from "@react-native-google-signin/google-signin"
-import { useState } from "react";
-import { Button } from "@/components/button";
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { Alert, Text, View } from "react-native";
+
 import { colors } from "@/styles/colors";
+import { Button } from "@/components/button";
 
-const iosClientID = process.env.IOS_CLIENT_ID
-const webClientID = process.env.WEB_CLIENT_ID
+import BottomSheet, { BottomSheetModal, BottomSheetView, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { BottomSheetProvider } from '@gorhom/bottom-sheet/lib/typescript/contexts';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-
-GoogleSignin.configure({
-  scopes: ['email', 'profile'],
-  webClientId: webClientID,
-  iosClientId: iosClientID
-})
 
 export default function SignIn() {  
   const [isAuthenticating, setIsAuthenticating] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  // ref
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  async function handleGoogleSignIn() {
-    try {
-      setIsAuthenticating(true)
-      const { idToken } = await GoogleSignin.signIn()
+  // variables
+  const snapPoints = ['50%']
 
-      if(idToken){
-      } else {
-        Alert.alert('Não foi possível conectar-se a sua conta google')
-        setIsAuthenticating(false)
-      }
-    } catch (error) {
-      Alert.alert('Não foi possível conectar-se a sua conta google')
-      setIsAuthenticating(false)
-    }
+  async function presentModal() {
+    bottomSheetModalRef.current?.present()
+    setIsOpen(true)
   }
 
   return (
-    <Button title="Sign in" isLoading={isAuthenticating} onPress={handleGoogleSignIn} bgColor={colors.primary[500]} />
+    <GestureHandlerRootView>
+    <BottomSheetModalProvider>
+    <View className='flex-1 items-center justify-center'>
+      <Button title="Sign in" isLoading={isAuthenticating} onPress={presentModal} bgColor={"bg-primary-500"}/>
+    </View>
+    <BottomSheetModal
+      ref={bottomSheetModalRef}
+      index={0}
+      snapPoints={snapPoints}
+    >
+      <View>
+        <Text>
+          Oi
+        </Text>
+      </View>
+    </BottomSheetModal>
+    </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   )
 }

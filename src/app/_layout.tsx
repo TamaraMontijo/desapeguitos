@@ -144,7 +144,42 @@ export default function Layout() {
             href: null,
           }}
         />
-        
+        <Tabs.Screen
+          name="profile"
+          options={{
+            headerStyle: {
+              height: 120
+            },
+            headerTitle: (props) => (
+              <View className="flex-row items-center">
+                <Blocks size={22} color="white" />
+                <Text className=" ml-3 color-white font-nunitoBold text-2xl" >DESAPEGUITOS</Text>
+              </View>
+            ),
+            headerTintColor: "white",
+            headerTitleStyle: {
+              fontSize: 20,
+              fontFamily: "Nunito_700Bold",
+            },
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => router.back()}
+                style={{ marginLeft: 10 }}
+              >
+                <ChevronLeft size={24} color="white" />
+              </TouchableOpacity>
+            ),
+            headerBackground: () => (
+              <LinearGradient
+                colors={[colors.primary[500], colors.primary[400]]}
+                style={{ flex: 1 }}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              />
+            ),
+            href: null,
+          }}
+        />
       </Tabs>
     </>
   );
