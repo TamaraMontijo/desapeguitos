@@ -34,10 +34,8 @@ export default function SignIn() {
       index={0}
       snapPoints={snapPoints}
     >
-      <View>
-        <Text>
-          Oi
-        </Text>
+      <View className='flex-1 items-center justify-center'>
+        <Button title='Sign In With Google' bgColor={'bg-black'}></Button>
       </View>
     </BottomSheetModal>
     </BottomSheetModalProvider>
