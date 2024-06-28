@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, FlatList} from "react-native";
 import { Search } from "lucide-react-native";
-import { Link, LinkProps } from "expo-router";
+import { Link } from "expo-router";
 
 
 import { colors } from "@/styles/colors";

@@ -1,12 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Alert, Text, View } from "react-native";
+import React, { useRef, useState } from 'react';
+import { View } from "react-native";
 
-import { colors } from "@/styles/colors";
+
 import { Button } from "@/components/button";
-
-import BottomSheet, { BottomSheetModal, BottomSheetView, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { BottomSheetProvider } from '@gorhom/bottom-sheet/lib/typescript/contexts';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModal, BottomSheetModalProvider }  from '@gorhom/bottom-sheet'
 
 
 export default function SignIn() {  
