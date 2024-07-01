@@ -18,7 +18,6 @@ export default function Home() {
   function handleCategorySelect(selectedCategory: string) {
     setCategory(selectedCategory);
   }
-  
 
   return (
     <View className="p-2">

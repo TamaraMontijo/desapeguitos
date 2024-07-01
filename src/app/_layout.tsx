@@ -34,7 +34,7 @@ export default function Layout() {
       <StatusBar barStyle="light-content" />
       <Tabs>
         <Tabs.Screen
-          name="index.tsx"
+          name="index"
           options={{
             title: `DESAPEGUITOS`,
             headerStyle: {
