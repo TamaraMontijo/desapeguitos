@@ -32,9 +32,9 @@ export default function Home() {
   // AUTH
   const [userInfo, setUserInfo] = React.useState();
   const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: '316769685627-35ke4pogcink5rku41k7nq0jp3bn27ra.apps.googleusercontent.com',
-    iosClientId: '316769685627-7gpri0cnsvrhseiv0vugebn5hm35rqqc.apps.googleusercontent.com',
-    webClientId: '316769685627-spg1tcc80f07bg5kv88ql7e7ombln54m.apps.googleusercontent.com',
+    androidClientId: '',
+    iosClientId: '',
+    webClientId: '',
   })
 
   React.useEffect(() => {
