@@ -5,7 +5,7 @@ import { StatusBar, TouchableOpacity, View, Text } from "react-native";
 
 import { Tabs, router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { Blocks, ChevronLeft, Home } from "lucide-react-native";
+import { Blocks, ChevronLeft, Home, List } from "lucide-react-native";
 
 import { colors } from "@/styles/colors";
 import { Loading } from "@/components/loading";
@@ -145,8 +145,10 @@ export default function Layout() {
           }}
         />
         <Tabs.Screen
-          name="profile"
+          name="desapego/my-desapegos"
           options={{
+            tabBarLabel: "Meus desapegos",
+            tabBarIcon: ({ color, size }) => <List color={color} size={size} />,
             headerStyle: {
               height: 120
             },
@@ -177,7 +179,6 @@ export default function Layout() {
                 end={{ x: 1, y: 0 }}
               />
             ),
-            href: null,
           }}
         />
       </Tabs>
