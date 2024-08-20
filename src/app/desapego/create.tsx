@@ -9,24 +9,38 @@ import { ScrollView, Text } from "react-native";
 import * as DropdownMenu from 'zeego/dropdown-menu'
 import { MaskedText, MaskedTextInput } from "react-native-mask-text";
 import { router } from "expo-router";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../../../firebaseConfig";
 
 
 export default function Create() {
-  const [title, setTitle] = useState("")
+  const [title, setTitle] = useState<string>("")
   const [description, setDescription] = useState("")
   const [cep, setCep] = useState("")
   const [type, setType] = useState("")
+  const [price, setPrice] = useState("")
+  const [itensToExchange, setItensToExchange] = useState("")
 
 
   const [maskedValue, setMaskedValue] = useState("");
   const [whatsappNumber, setWhatsappNumber] = useState("");
 
   function handleCreateDesapego() {
-    if (!title.trim() || !description.trim() || !cep.trim()) {
+    if (!title.trim() || !description.trim() || !cep.trim() || !whatsappNumber.trim() || !type.trim()) {
       Alert.alert('Preencha todos os campos')
     } else {
       console.log(title, description, cep, type)
-      console.log("publicado")
+       addDoc(collection(db, 'desapego'), 
+       {
+         title,
+         description,
+         cep,
+         type,
+         whatsappNumber,
+         price,
+         itensToExchange
+       })
+       
       router.navigate('/')
     }
   }
@@ -39,6 +53,10 @@ export default function Create() {
       <View className="pb-8">
         <Input>
           <Input.Field placeholder="Título" returnKeyType="default" onChangeText={setTitle} />
+        </Input>
+
+        <Input style="h-32">
+          <Input.Field placeholder="Descrição" returnKeyType="default" onChangeText={setDescription} multiline />
         </Input>
 
         <DropdownMenu.Root>
@@ -62,10 +80,19 @@ export default function Create() {
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
-
-        <Input style="h-32">
-          <Input.Field placeholder="Descrição" returnKeyType="default" onChangeText={setDescription} multiline />
-        </Input>
+        
+        {
+          (type === 'Venda' || type === 'Troca') &&
+          <Input>
+              {
+                (type === 'Venda') ?
+                  <Input.Field placeholder="Preço" returnKeyType="default" onChangeText={setPrice} multiline /> 
+                :
+                <Input.Field placeholder="Itens para troca" returnKeyType="default" onChangeText={setItensToExchange} multiline /> 
+              }
+          </Input>
+        }
+        
 
         <Input>
         <MaskedTextInput

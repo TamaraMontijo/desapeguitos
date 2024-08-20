@@ -147,7 +147,7 @@ export default function Layout() {
         <Tabs.Screen
           name="desapego/my-desapegos"
           options={{
-            tabBarLabel: "Meus desapegos",
+            tabBarLabel: "Meus Desapegos",
             tabBarIcon: ({ color, size }) => <List color={color} size={size} />,
             headerStyle: {
               height: 120

@@ -91,11 +91,7 @@ export default function Home() {
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
-      if (user) {
         setUserInfo(user)
-      } else {
-        setUserInfo(user)
-      }
     });
 
     return () => unsub();
