@@ -9,10 +9,17 @@ import {
 } from "react-native";
 
 type DesapegoDataProps = {
-  title: string;
+  id: string;
+  cep: string;
   description: string;
-  thumbnail: ImageProps;
-  age: string;
+  imageUrl: string;
+  itensToExchange: string;
+  price: number;
+  title: string;
+  type: 'Venda' | 'Troca' | 'Doação';
+  whatsappNumber: string;
+  gender?: string;
+  age?: string;
 };
 
 type DesapegoProps = TouchableOpacityProps & {
@@ -29,7 +36,7 @@ export const Card = forwardRef<TouchableOpacity, DesapegoProps>(
       >
         <View className="pt-1">
           <Image
-            source={{ uri: "https://picsum.photos/400" }}
+            source={{ uri: data.imageUrl }}
             className="w-48 h-44 rounded-t-lg"
           />
           <Text className=" font-nunitoBold text-blue mt-1">{data.title}</Text>

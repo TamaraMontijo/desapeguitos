@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, FlatList, Text } from "react-native";
-import { Blocks, Radius, Search } from "lucide-react-native";
+import { Blocks, Search } from "lucide-react-native";
 import { Link } from "expo-router";
 
 
 import { colors } from "@/styles/colors";
-import { CATEGORIES, DESAPEGO } from "@/utils/data/desapego";
+import { CATEGORIES, Desapego } from "@/utils/data/desapego";
 
 import { Input } from "@/components/input";
 import { Button } from "@/components/button";
@@ -13,7 +13,7 @@ import { CategoryLabel } from "@/components/category-label";
 import { Card } from "@/components/card";
 
 
-import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet'
 
 import * as Google from 'expo-auth-session/providers/google'
@@ -26,13 +26,12 @@ import {
   signOut,
   User
 } from 'firebase/auth'
-import { auth } from '../../firebaseConfig'
+import { auth, db } from '../../firebaseConfig'
 
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
-import { opacity } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
+import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
 
 WebBrowser.maybeCompleteAuthSession()
 
@@ -104,6 +103,23 @@ export default function Home() {
     setCategory(selectedCategory);
   }
 
+  const [desapegos, setDesapegos] = useState<Desapego[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(query(
+      collection(db, 'desapego'),
+      orderBy('createdAt', 'desc')
+    ), (snapshot) => {
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Desapego));
+      setDesapegos(data);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <>
       <GestureHandlerRootView>
@@ -135,8 +151,8 @@ export default function Home() {
           </View>
         </View>
         <FlatList
-          data={DESAPEGO}
-          keyExtractor={(item) => item.title}
+          data={desapegos}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             userInfo ?
             (<Link href={`/desapego/${item.id}`} asChild>
@@ -152,8 +168,6 @@ export default function Home() {
           contentContainerStyle={{ gap: 12, paddingBottom: 150}}
         />    
       </View>
-
-
 
         <BottomSheetModalProvider>
           <BottomSheetModal

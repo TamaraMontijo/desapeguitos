@@ -16,10 +16,14 @@
       "**/*"
     ],
     "ios": {
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Este aplicativo usa sua localização para mostrar desapegos relevantes com base em sua localização."
+      },
       "supportsTablet": true,
       "bundleIdentifier": "com.tamaramontijo.desapeguitos"
     },
     "android": {
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

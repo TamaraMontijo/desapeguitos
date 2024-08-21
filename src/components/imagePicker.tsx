@@ -4,10 +4,9 @@ import * as ImagePicker from 'expo-image-picker'
 
 
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { addDoc, collection, onSnapshot } from "firebase/firestore";
-import { db, storage } from '../../firebaseConfig'
+import { storage } from '../../firebaseConfig'
 
-export default function ImagePickerComponent() {
+export default function ImagePickerComponent({ onImageUpload }: any) {
   const [image, setImage] = useState<string | null>(null)
   const [progress, setProgress] = useState("0");
 
@@ -17,58 +16,42 @@ export default function ImagePickerComponent() {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 4],
-      quality: 1,
+      quality: 0.8,
     })
-
-    console.log(result)
 
     if (!result.canceled) {
       setImage(result.assets[0].uri)
-      await uploadImage(result.assets[0].uri, "image");
+      // await uploadImage(result.assets[0].uri, "image");
+      const imageUrl = await uploadImage(result.assets[0].uri);
+      onImageUpload(imageUrl); 
     }
   }
 
-  async function uploadImage(uri: any, fileType: string) {
+  async function uploadImage(uri: string): Promise<string> {
     const response = await fetch(uri);
     const blob = await response.blob();
 
     const storageRef = ref(storage, "Desapego/" + new Date().getTime());
     const uploadTask = uploadBytesResumable(storageRef, blob);
 
-    // listen for events
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        setProgress(progress.toFixed());
-      },
-      (error) => {
-        // handle error
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          console.log("File available at", downloadURL);
-          // save record
-          await saveRecord(fileType, downloadURL, new Date().toISOString());
-          setImage("");
-        });
-      }
-    );
-  }
-
-  async function saveRecord(fileType: string, url: string, createdAt: string) {
-    try {
-      const docRef = await addDoc(collection(db, "files"), {
-        fileType,
-        url,
-        createdAt,
-      });
-      console.log("document saved correctly", docRef.id);
-    } catch (e) {
-      console.log(e);
-    }
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setProgress(progress.toFixed());
+        },
+        (error) => {
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
   }
 
   return (
