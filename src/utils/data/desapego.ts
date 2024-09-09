@@ -13,6 +13,7 @@ export interface Desapego {
   gender?: string;
   age?: string;
   size?: string;
+  category: string;
 }
 
 

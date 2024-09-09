@@ -1,18 +1,11 @@
 // locationUtils.ts
 import axios from 'axios';
 import * as Location from 'expo-location';
-import { useState } from 'react';
-import { Desapego as DesapegoInterface } from "@/utils/data/desapego";
 
 export interface Coordinates {
   latitude: number;
   longitude: number;
 }
-
-const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
-const [distance, setDistance] = useState<number | null>(null);
-const [errorMsg, setErrorMsg] = useState<string | null>(null);
-const [desapego, setDesapego] = useState<DesapegoInterface | null>(null);
 
 export async function getCoordinatesFromCEP(cep: string): Promise<Coordinates | null> {
   try {
@@ -49,29 +42,29 @@ export function calculateDistance(loc1: Coordinates, loc2: Coordinates): number 
 }
 
 export async function fetchLocationAndCalculateDistance(
-    cep: string
-  ): Promise<{ userCoordinates: Coordinates | null; distance: number | null }> {
-    try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        throw new Error('Permissão de acesso à localização negada');
-      }
-  
-      const location = await Location.getCurrentPositionAsync({});
-      const userCoordinates: Coordinates = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
-  
-      const desapegoCoordinates = await getCoordinatesFromCEP(cep);
-      if (desapegoCoordinates) {
-        const distanceKm = calculateDistance(userCoordinates, desapegoCoordinates);
-        return { userCoordinates, distance: distanceKm };
-      }
-  
-      return { userCoordinates, distance: null };
-    } catch (error) {
-      console.error('Erro ao buscar localização ou calcular distância:', error);
-      return { userCoordinates: null, distance: null };
+  cep: string
+): Promise<{ userCoordinates: Coordinates | null; distance: number | null }> {
+  try {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      throw new Error('Permissão de acesso à localização negada');
     }
+
+    const location = await Location.getCurrentPositionAsync({});
+    const userCoordinates: Coordinates = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+
+    const desapegoCoordinates = await getCoordinatesFromCEP(cep);
+    if (desapegoCoordinates) {
+      const distanceKm = calculateDistance(userCoordinates, desapegoCoordinates);
+      return { userCoordinates, distance: distanceKm };
+    }
+
+    return { userCoordinates, distance: null };
+  } catch (error) {
+    console.error('Erro ao buscar localização ou calcular distância:', error);
+    return { userCoordinates: null, distance: null };
   }
+}

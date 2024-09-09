@@ -32,6 +32,7 @@ import { auth, db } from '../../firebaseConfig'
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
 import { collection, onSnapshot, orderBy, query, where } from "firebase/firestore";
+import { fetchLocationAndCalculateDistance } from "@/utils/functions/locationUtils";
 
 WebBrowser.maybeCompleteAuthSession()
 
@@ -109,16 +110,34 @@ export default function Home() {
     const unsubscribe = onSnapshot(query(
       collection(db, 'desapego'),
       orderBy('createdAt', 'desc')
-    ), (snapshot) => {
+    ), async (snapshot) => {
       const data = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       } as Desapego));
-      setDesapegos(data);
+  
+      const desapegosWithDistance = await Promise.all(
+        data.map(async (item) => {
+          const { distance } = await fetchLocationAndCalculateDistance(item.cep);
+          return {
+            ...item,
+            distance
+          };
+        })
+      );
+  
+      // Filtro por categoria
+      const filteredByCategory = desapegosWithDistance.filter(item => item.category === category);
+  
+      // Ordenar por distância
+      const sortedByDistance = filteredByCategory.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+  
+      setDesapegos(sortedByDistance);
     });
-
+  
     return () => unsubscribe();
-  }, []);
+  }, [category]);
+  
 
   return (
     <>
@@ -160,7 +179,7 @@ export default function Home() {
             </Link>) : 
             
             (
-              <Card data={item} onPress={presentSignIn}/>)
+              <Card data={item} onPress={presentSignIn} />)
           )}
           numColumns={2}
           horizontal={false}

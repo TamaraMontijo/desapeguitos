@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import * as Location from 'expo-location';
 import { doc, getDoc } from "firebase/firestore";
 import { Link, useLocalSearchParams } from "expo-router";
-import { formatCurrency } from "@/utils/functions/format-currency";
-import { View, Text, Image, ScrollView, TouchableOpacity, Alert } from "react-native";
+import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Desapego as DesapegoInterface } from "@/utils/data/desapego";
 import { db } from "../../../firebaseConfig.js";
+import { formatCurrency } from "@/utils/functions/format-currency";
+import { fetchLocationAndCalculateDistance } from "@/utils/functions/locationUtils";
+import axios from "axios";
 
-// Interface for storing the location data
 interface Coordinates {
   latitude: number;
   longitude: number;
@@ -48,7 +47,7 @@ export default function Desapego() {
 
   // Fetch Neighborhood once Desapego is loaded
   useEffect(() => {
-    if (!desapego) return;
+    if (!desapego?.cep) return;
 
     const fetchNeighborhood = async () => {
       const bairro = await getNeighborhood(desapego.cep);
@@ -56,39 +55,26 @@ export default function Desapego() {
     };
 
     fetchNeighborhood();
-  }, [desapego]);
+  }, [desapego?.cep]);
 
   // Request user location and calculate distance to Desapego
   useEffect(() => {
-    const fetchLocationAndCalculateDistance = async () => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setErrorMsg('Permissão de acesso à localização negada');
-          return;
-        }
-
-        const location = await Location.getCurrentPositionAsync({});
-        const userCoordinates = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude
-        };
+    const calculateDistanceToDesapego = async () => {
+      if (!desapego?.cep) return;
+      
+      const { distance, userCoordinates } = await fetchLocationAndCalculateDistance(desapego.cep);
+      if (userCoordinates) {
         setUserLocation(userCoordinates);
-
-        if (desapego) {
-          const desapegoCoordinates = await getCoordinatesFromCEP(desapego.cep);
-          if (desapegoCoordinates) {
-            const distanceKm = calculateDistance(userCoordinates, desapegoCoordinates);
-            setDistance(distanceKm);
-          }
-        }
-      } catch (error) {
-        console.error("Erro ao buscar localização:", error);
+      }
+      if (distance !== null) {
+        setDistance(distance);
+      } else {
+        setErrorMsg("Erro ao calcular distância");
       }
     };
 
-    fetchLocationAndCalculateDistance();
-  }, [desapego]);
+    calculateDistanceToDesapego();
+  }, [desapego?.cep]);
 
   if (loading) {
     return (
@@ -108,58 +94,29 @@ export default function Desapego() {
 
   // Function to fetch coordinates and neighborhood from ViaCEP API
   async function getNeighborhood(cep: string): Promise<string | null> {
-     try {
-    const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
-      params: {
-        address: cep,
-        key: process.env.EXPO_PUBLIC_GEOCODING_API_KEY,
-      },
-    });
-
-    if (response.data.status === 'OK') {
-      const result = response.data.results[0];
-      const neighborhoodComponent = result.address_components.find((component: any) =>
-        component.types.includes('sublocality') || component.types.includes('neighborhood')
-      );
-      return neighborhoodComponent ? neighborhoodComponent.long_name : null;
-    } else {
-      console.error(`Google API error: ${response.data.status}`);
-      return null;
-    }
-  } catch (error) {
-    console.error(`Failed to fetch data for CEP ${cep}:`, error);
-    return null;
-  }
-  }
-
-  async function getCoordinatesFromCEP(cep: string): Promise<Coordinates | null> {
     try {
-      const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${cep}&key=${process.env.EXPO_PUBLIC_GEOCODING_API_KEY}`);
-      if (response.data.status === "OK") {
-        const location = response.data.results[0].geometry.location;
-        return { latitude: location.lat, longitude: location.lng };
-      }
-      console.error('Erro ao buscar coordenadas para o CEP:', response.data);
-      return null;
-    } catch (error) {
-      console.error(`Erro ao buscar coordenadas do CEP: ${cep}`, error);
-      return null;
-    }
-  }
+   const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
+     params: {
+       address: cep,
+       key: process.env.EXPO_PUBLIC_GEOCODING_API_KEY,
+     },
+   });
 
-  function calculateDistance(loc1: Coordinates, loc2: Coordinates): number {
-    const toRadians = (degree: number) => (degree * Math.PI) / 180;
-    const R = 6371; // Earth's radius in km
-    const dLat = toRadians(loc2.latitude - loc1.latitude);
-    const dLon = toRadians(loc2.longitude - loc1.longitude);
-
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRadians(loc1.latitude)) * Math.cos(toRadians(loc2.latitude)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
-  }
+   if (response.data.status === 'OK') {
+     const result = response.data.results[0];
+     const neighborhoodComponent = result.address_components.find((component: any) =>
+       component.types.includes('sublocality') || component.types.includes('neighborhood')
+     );
+     return neighborhoodComponent ? neighborhoodComponent.long_name : null;
+   } else {
+     console.error(`Google API error: ${response.data.status}`);
+     return null;
+   }
+ } catch (error) {
+   console.error(`Failed to fetch data for CEP ${cep}:`, error);
+   return null;
+ }
+ }
 
   return (
     <ScrollView className="flex-1 p-4">
@@ -170,7 +127,12 @@ export default function Desapego() {
           <Text className="font-nunitoBold text-blue text-xl mb-4">
             há <Text className="text-green">{distance ? `${distance.toFixed(1)} km` : '...'}</Text>
           </Text>
-          <Text className="font-nunitoBold text-blue text-3xl mb-8">{formatCurrency(desapego.price)}</Text>
+
+          {
+            (desapego.type === 'Venda') &&
+             <Text className="font-nunitoBold text-blue text-3xl mb-8">R${formatCurrency(desapego.price)}</Text>
+          }
+
           <Text className="font-nunitoBold text-blue text-2xl mb-2">Descrição</Text>
           <Text className="font-nunitoRegular text-dark text-xl mb-10 text-justify pr-4">{desapego.description}</Text>
           <View className="flex-row justify-between pr-4">
