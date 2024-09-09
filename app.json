@@ -17,7 +17,8 @@
     ],
     "ios": {
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Este aplicativo usa sua localização para mostrar desapegos relevantes com base em sua localização."
+        "NSLocationWhenInUseUsageDescription": "Este aplicativo usa sua localização para mostrar desapegos relevantes com base em sua localização.",
+        "NSLocationAlwaysUsageDescription": "Este aplicativo precisa acessar sua localização em segundo plano para fornecer uma experiência contínua."
       },
       "supportsTablet": true,
       "bundleIdentifier": "com.tamaramontijo.desapeguitos"

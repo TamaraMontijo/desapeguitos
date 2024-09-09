@@ -148,6 +148,10 @@ export default function Create() {
             <DropdownMenu.Item key="brinquedos" onSelect={() => setCategory('Brinquedos')}>
               <DropdownMenu.ItemTitle> Brinquedos </DropdownMenu.ItemTitle>
             </DropdownMenu.Item>
+
+            <DropdownMenu.Item key="material" onSelect={() => setCategory('Material')}>
+              <DropdownMenu.ItemTitle> Material Escolar </DropdownMenu.ItemTitle>
+            </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
 

@@ -16,7 +16,7 @@ export interface Desapego {
 }
 
 
-const CATEGORIES = ['Todos', 'Fraldas', 'Roupas', 'Móveis', 'Brinquedos']
+const CATEGORIES = ['Todos', 'Fraldas', 'Roupas', 'Móveis', 'Brinquedos', 'Material Escolar']
 
 type DesapegoProps = Desapego
 

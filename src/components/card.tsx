@@ -1,4 +1,5 @@
-import { forwardRef } from "react";
+import { calculateDistance, Coordinates, fetchLocationAndCalculateDistance, getCoordinatesFromCEP } from "@/utils/functions/locationUtils";
+import { forwardRef, useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -24,10 +25,15 @@ type DesapegoDataProps = {
 
 type DesapegoProps = TouchableOpacityProps & {
   data: DesapegoDataProps;
+  userLocation: Coordinates;
 };
 
 export const Card = forwardRef<TouchableOpacity, DesapegoProps>(
   ({ data, ...rest }, ref) => {
+    const [distance, setDistance] = useState<number | null>(null);
+
+    
+    
     return (
       <TouchableOpacity
         ref={ref}
@@ -39,11 +45,11 @@ export const Card = forwardRef<TouchableOpacity, DesapegoProps>(
             source={{ uri: data.imageUrl }}
             className="w-48 h-44 rounded-t-lg"
           />
-          <Text className=" font-nunitoBold text-blue mt-1">{data.title}</Text>
-          <View className="flex-row py-2 gap-16 justify-between">
-            <Text className="text-blue font-nunitoBold">{data.age}</Text>
-            <Text className="text-green font-nunitoBold">0.5 km</Text>
+          <View className="flex-row justify-between">
+            <Text className=" font-nunitoBold text-blue mt-1">{data.title}</Text>
+            <Text className="text-green font-nunitoBold">{distance ? `${distance.toFixed(1)} km` : '...'}</Text>    
           </View>
+          <Text className="text-blue font-nunitoBold">{data.age}</Text>
           <View className="w-44 mb-1">
             <Text className="font-nunitoRegular">{data.description}</Text>
           </View>
