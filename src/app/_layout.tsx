@@ -5,7 +5,7 @@ import { StatusBar, TouchableOpacity, View, Text } from "react-native";
 
 import { Tabs, router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { Blocks, ChevronLeft, Home, List } from "lucide-react-native";
+import { Blocks, ChevronLeft, Home, Info, List } from "lucide-react-native";
 
 import { colors } from "@/styles/colors";
 import { Loading } from "@/components/loading";
@@ -29,6 +29,10 @@ export default function Layout() {
     return <Loading />;
   }
 
+  function handleInfoPress() {
+    console.log('pressed!')
+  }
+
   return (
     <>
       <StatusBar barStyle="light-content" />
@@ -40,10 +44,13 @@ export default function Layout() {
             headerStyle: {
               height: 120
             },
-            headerTitle: (props) => (
-              <View className="flex-row items-center">
-                <Blocks size={22} color="white" />
-                <Text className=" ml-3 color-white font-nunitoBold text-2xl" >DESAPEGUITOS</Text>
+            headerTitle: () => (
+              <View className="flex-row items-center justify-center w-full">
+                <View className="flex-row items-center">
+                  <Blocks size={22} color="white" />
+                  <Text className="ml-3 text-white font-nunitoBold text-2xl">DESAPEGUITOS</Text>
+                </View>
+                <Info size={22} color="white" style={{ position: 'absolute', right: -30 }} onPress={() => handleInfoPress()}/>
               </View>
             ),
             headerTintColor: "white",

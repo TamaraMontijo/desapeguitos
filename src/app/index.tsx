@@ -78,10 +78,10 @@ export default function Home() {
       const { id_token } = response.params
       const credential = GoogleAuthProvider.credential(id_token)
       
-      bottomSheetSignIn.current?.present()
-      setIsOpen(false)
-
-      signInWithCredential(auth, credential)
+      signInWithCredential(auth, credential).then(() => {
+        // Fecha o modal após o login bem-sucedido
+        bottomSheetSignIn.current?.dismiss();
+      });
     }
 
     if (response?.type == "error") {
@@ -105,6 +105,8 @@ export default function Home() {
   }
 
   const [desapegos, setDesapegos] = useState<Desapego[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
 
   useEffect(() => {
     const unsubscribe = onSnapshot(query(
@@ -143,6 +145,49 @@ export default function Home() {
   
     return () => unsubscribe();
   }, [category]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(query(
+      collection(db, 'desapego'),
+      orderBy('createdAt', 'desc')
+    ), async (snapshot) => {
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Desapego));
+  
+      const desapegosWithDistance = await Promise.all(
+        data.map(async (item) => {
+          const { distance } = await fetchLocationAndCalculateDistance(item.cep);
+          return {
+            ...item,
+            distance
+          };
+        })
+      );
+  
+      let filteredByCategory = desapegosWithDistance;
+  
+      if (category && category !== 'Todos') {
+        filteredByCategory = desapegosWithDistance.filter(
+          (item) => item.category === category
+        );
+      }
+  
+      // Filtro por título do produto
+      const filteredBySearch = filteredByCategory.filter((item) => 
+        item.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+  
+      // Ordenar por distância
+      const sortedByDistance = filteredBySearch.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+  
+      setDesapegos(sortedByDistance);
+    });
+  
+    return () => unsubscribe();
+  }, [category, searchQuery]);
+  
   
 
   return (
@@ -152,7 +197,12 @@ export default function Home() {
         <View className="p-3">
           <View className="flex-row w-full gap-2 items-center justify-between">
             <Input style="h-14">
-              <Input.Field placeholder="Buscar produto" returnKeyType="search" />
+              <Input.Field 
+                placeholder="Buscar produto" 
+                returnKeyType="search" 
+                value={searchQuery}
+                onChangeText={(text) => setSearchQuery(text)}
+              />
               <Search color={colors.primary[500]} />
             </Input>
             <Button title="Filtros" bgColor={'bg-primary-500'} onPress={toggleFiltersModal}/>
