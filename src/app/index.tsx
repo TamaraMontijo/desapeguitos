@@ -127,7 +127,13 @@ export default function Home() {
       );
   
       // Filtro por categoria
-      const filteredByCategory = desapegosWithDistance.filter(item => item.category === category);
+      let filteredByCategory = desapegosWithDistance;
+
+      if (category && category !== 'Todos') {
+        filteredByCategory = desapegosWithDistance.filter(
+          (item) => item.category === category
+        );
+      }
   
       // Ordenar por distância
       const sortedByDistance = filteredByCategory.sort((a, b) => (a.distance || 0) - (b.distance || 0));
