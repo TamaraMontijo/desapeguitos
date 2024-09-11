@@ -92,7 +92,7 @@ export default function Desapego() {
     );
   }
 
-  // Function to fetch coordinates and neighborhood from ViaCEP API
+  // Function to fetch coordinates and neighborhood from google API
   async function getNeighborhood(cep: string): Promise<string | null> {
     try {
    const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
@@ -123,23 +123,30 @@ export default function Desapego() {
       <View>
         <Image source={{ uri: desapego.imageUrl }} className="w-full h-72 rounded-lg" resizeMode="cover" />
         <View>
-          <Text className="font-nunitoBold text-blue text-4xl mt-4">{desapego.title}</Text>
-          <Text className="font-nunitoBold text-blue text-xl mb-4">
+          <View className="flex flex-row items-end justify-between my-8">
+          <Text className="font-nunitoBold text-blue text-4xl w-1/2 flex-wrap">{desapego.title}</Text>
+          <Text className="font-nunitoBold text-blue text-xl">
             há <Text className="text-green">{distance ? `${distance.toFixed(1)} km` : '...'}</Text>
           </Text>
+          </View>
+          
 
           {
             (desapego.type === 'Venda') &&
-             <Text className="font-nunitoBold text-blue text-3xl mb-8">R${formatCurrency(desapego.price)}</Text>
+             <Text className="font-nunitoBold text-blue text-3xl mb-8 text-right">R${formatCurrency(desapego.price)}</Text>
           }
 
           <Text className="font-nunitoBold text-blue text-2xl mb-2">Descrição</Text>
           <Text className="font-nunitoRegular text-dark text-xl mb-10 text-justify pr-4">{desapego.description}</Text>
           <View className="flex-row justify-between pr-4">
+          {
+            (desapego.age || desapego.size) &&
             <View>
-              <Text className="font-nunitoBold text-blue text-2xl">Tamanho</Text>
-              <Text className="font-nunitoRegular text-dark text-xl">{desapego.age} {desapego.size}</Text>
-            </View>
+            <Text className="font-nunitoBold text-blue text-2xl">Tamanho</Text>
+            <Text className="font-nunitoRegular text-dark text-xl">{desapego.age} {desapego.size}</Text>
+          </View>
+          }
+            
             <View>
               <Text className="font-nunitoBold text-blue text-2xl">Localização</Text>
               <Text className="font-nunitoRegular text-dark text-xl">{neighborhood || 'Carregando bairro...'}</Text>

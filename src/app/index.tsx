@@ -66,7 +66,7 @@ export default function Home() {
 	);
 
   // AUTH
-  const [userInfo, setUserInfo] = React.useState<User | null>();
+  const [userInfo, setUserInfo] = useState<User | null>();
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: process.env.EXPO_PUBLIC_ANDROID_CLIENT_ID,
     iosClientId: process.env.EXPO_PUBLIC_IOS_CLIENT_ID,
@@ -273,7 +273,6 @@ export default function Home() {
           >
             <View className='flex-1 items-center justify-center'>
               <Text>EM BREVE VOCÊ PODERÁ FILTRAR POR DESAPEGUITOS</Text>
-              <Button title="Sign Out" bgColor={"bg-black"} onPress={async () => await signOut(auth)} />
             </View>
           </BottomSheetModal>
         </BottomSheetModalProvider>

@@ -1,6 +1,6 @@
 import "@/styles/global.css";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StatusBar, TouchableOpacity, View, Text } from "react-native";
 
 import { Tabs, router } from "expo-router";
@@ -17,6 +17,12 @@ import {
   Nunito_700Bold,
 } from "@expo-google-fonts/nunito";
 import CreateAddButton from "@/components/create-ad-button";
+import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "../../firebaseConfig";
+import { BottomSheetSignIn } from "@/components/bottomSheetSignIn";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function Layout() {
   const [fontsLoaded] = useFonts({
@@ -24,17 +30,36 @@ export default function Layout() {
     Nunito_400Regular,
     Nunito_700Bold,
   });
+  const [user, setUser] = useState<User | null>(null);
+  
+  // Ref do BottomSheet
+  const bottomSheetRef = useRef<BottomSheetModalMethods>(null);
+
+  useEffect(() => {
+    // Monitora mudanças de estado do usuário
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+
+    // Cleanup da subscrição
+    return () => unsubscribe();
+  }, []);
+
+  // Função para abrir o BottomSheet
+  const openBottomSheet = () => {
+    if (bottomSheetRef.current) {
+      bottomSheetRef.current.present();
+    }
+  };
 
   if (!fontsLoaded) {
     return <Loading />;
   }
 
-  function handleInfoPress() {
-    console.log('pressed!')
-  }
 
   return (
-    <>
+    <GestureHandlerRootView>
+    <BottomSheetModalProvider>
       <StatusBar barStyle="light-content" />
       <Tabs>
         <Tabs.Screen
@@ -50,9 +75,17 @@ export default function Layout() {
                   <Blocks size={22} color="white" />
                   <Text className="ml-3 text-white font-nunitoBold text-2xl">DESAPEGUITOS</Text>
                 </View>
-                <Info size={22} color="white" style={{ position: 'absolute', right: -30 }} onPress={() => handleInfoPress()}/>
               </View>
             ),
+            headerRight: () =>
+              user ? (
+                <TouchableOpacity
+                  onPress={openBottomSheet}
+                  style={{ marginRight: 20 }}
+                >
+                  <Info size={24} color="white" />
+                </TouchableOpacity>
+              ) : null,
             headerTintColor: "white",
             headerTitleStyle: {
               fontSize: 20,
@@ -189,6 +222,8 @@ export default function Layout() {
           }}
         />
       </Tabs>
-    </>
+      <BottomSheetSignIn ref={bottomSheetRef} />
+    </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
