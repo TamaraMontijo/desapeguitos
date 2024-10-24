@@ -74,15 +74,15 @@ export const Card = forwardRef<TouchableOpacity, DesapegoProps>(
         <View className="pt-1 relative">
           <Image
             source={{ uri: data.imageUrl }}
-            className="w-52 h-44 rounded-t-lg"
+            className="w-48 h-44 rounded-t-lg"
             style={{ zIndex: -1 }}
           />
           <View className="max-w-full">
             <View>
               <Text className=" font-nunitoBold text-blue mt-1">{data.title}</Text>
-              <View className="flex justify-between">
+              <View className="flex justify-between flex-row">
                 <Text className="text-green font-nunitoBold">há {distance ? `${distance.toFixed(1)} km` : '...'}</Text>
-                <Text className="text-green font-nunitoBold">R${data.price}</Text>
+                <Text className="text-green font-nunitoBold">{data.price ? `R$ ${data.price}` : ''}</Text>
               </View>
 
             </View>
