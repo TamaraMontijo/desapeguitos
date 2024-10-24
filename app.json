@@ -2,6 +2,7 @@
   "expo": {
     "name": "desapeguitos",
     "slug": "desapeguitos",
+    "owner": "tgtech",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -16,15 +17,21 @@
       "**/*"
     ],
     "ios": {
+      "buildNumber": "10",
+      "usesAppleSignIn": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Este aplicativo usa sua localização para mostrar desapegos relevantes com base em sua localização.",
-        "NSLocationAlwaysUsageDescription": "Este aplicativo precisa acessar sua localização em segundo plano para fornecer uma experiência contínua."
+        "NSLocationAlwaysUsageDescription": "Este aplicativo precisa acessar sua localização em segundo plano para fornecer uma experiência contínua.",
+        "NSCameraUsageDescription": "Este aplicativo precisa acessar a câmera para permitir que você tire fotos."
       },
       "supportsTablet": true,
       "bundleIdentifier": "com.tamaramontijo.desapeguitos"
     },
     "android": {
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -38,7 +45,8 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      "expo-apple-authentication"
     ],
     "experiments": {
       "typedRoutes": true

@@ -14,8 +14,8 @@ function Input({children, style}: { children: ReactNode, style?: string}) {
 function Field({...rest} : TextInputProps) {
   return (
     <TextInput 
-      className="flex-1 text-primary-500 text-base font-nunitoRegular"
-      placeholderTextColor={colors.primary[500]}
+      className="flex-1 text-base font-nunitoRegular"
+      placeholderTextColor={colors.dark}
       {...rest}
     />
   )

@@ -14,6 +14,7 @@ interface Coordinates {
 }
 
 export default function Desapego() {
+
   const { id } = useLocalSearchParams();
   const [loading, setLoading] = useState(true);
   const [desapego, setDesapego] = useState<DesapegoInterface | null>(null);
@@ -21,6 +22,7 @@ export default function Desapego() {
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [userMetadata, setUserMetadata] = useState<{ lastSignInTime: string, creationTime: string } | null>(null);
 
   // Fetch Desapego data
   useEffect(() => {
@@ -44,6 +46,8 @@ export default function Desapego() {
 
     fetchDesapego();
   }, [id]);
+
+  
 
   // Fetch Neighborhood once Desapego is loaded
   useEffect(() => {
@@ -75,6 +79,28 @@ export default function Desapego() {
 
     calculateDistanceToDesapego();
   }, [desapego?.cep]);
+
+  useEffect(() => {
+    
+    const fetchUserMetadata = async () => {
+      if (!desapego?.userId) return
+      
+      try {
+        const userId = desapego.userId
+        // Chama a função Cloud Function passando o userId como parâmetro
+        const response = await axios.get(`https://us-central1-desapeguitos-419814.cloudfunctions.net/getUserMetadata`, {
+          params: { userId }
+        });
+
+        // Atualiza o estado com as informações do usuário
+        setUserMetadata(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados do usuário:", error);
+      }
+    };
+
+    fetchUserMetadata();
+  }, [desapego?.userId]);
 
   if (loading) {
     return (
@@ -118,6 +144,11 @@ export default function Desapego() {
  }
  }
 
+ const formatDateToMonthYear = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+};
+
   return (
     <ScrollView className="flex-1 p-4">
       <View>
@@ -158,13 +189,23 @@ export default function Desapego() {
         <Text className="mb-12 font-nunitoBold text-blue text-2xl">Desapego de:</Text>
         <View className="flex-row items-center gap-4">
           <Image className="w-24 h-24 rounded-full" source={{ uri: `${desapego.userPhoto}` }} />
-          <View>
+          <View className="w-2/3 flex-wrap">
             <Text className="font-nunitoBold text-xl mb-2">{desapego.userName}</Text>
-            <Text className="font-nunitoLight">Último acesso há 2 minutos</Text>
-            <Text className="font-nunitoRegular">No desapeguitos desde abril de 2024</Text>
+            <Text className="font-nunitoLight">
+              Último acesso: {userMetadata?.lastSignInTime 
+                ? `em ${formatDateToMonthYear(userMetadata.lastSignInTime)}` 
+                : 'carregando...'}
+            </Text>
+            <Text className="font-nunitoRegular w-full flex-wrap">
+              No desapeguitos desde {userMetadata?.creationTime 
+                ? formatDateToMonthYear(userMetadata.creationTime) 
+                : 'carregando...'}
+            </Text>
           </View>
         </View>
-        <TouchableOpacity className="w-28 h-28 absolute ml-[75%] mt-[10%]">
+        <TouchableOpacity 
+        className="absolute right-4 top-0"
+      >
           <Link href={`https://wa.me/${desapego.whatsappNumber}`}>
             <Image source={require("@/assets/whatsapp.png")} className="w-28 h-28" />
           </Link>

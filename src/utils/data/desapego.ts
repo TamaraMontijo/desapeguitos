@@ -1,5 +1,6 @@
 export interface Desapego {
   id: string;
+  userId: string;
   cep: string;
   description: string;
   imageUrl: string;

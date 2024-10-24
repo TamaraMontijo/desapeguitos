@@ -1,16 +1,15 @@
-import React, { ForwardedRef, forwardRef, useEffect, useState } from "react";
-import { View, Text } from "react-native";
-import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
-import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import { Blocks } from "lucide-react-native";
-import { GoogleAuthProvider, signInWithCredential, signOut } from "firebase/auth";
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
-import { auth } from "../../firebaseConfig";
-import { colors } from "@/styles/colors";
-import { BottomSheetDefaultBackdropProps } from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types";
+import { ForwardedRef, forwardRef, useEffect, useState } from "react";
+import { Alert, View, Text, Button } from "react-native";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { Button } from "./button";
+import { BottomSheetModal, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import * as WebBrowser from 'expo-web-browser';
+import { Blocks } from "lucide-react-native";
+import { colors } from "@/styles/colors";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
+import * as Google from 'expo-auth-session/providers/google';
+import { GoogleAuthProvider, signInWithCredential, signOut, deleteUser, OAuthProvider } from "firebase/auth";
+import { auth } from "../../firebaseConfig";
+import * as AppleAuthentication from 'expo-apple-authentication';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -26,7 +25,6 @@ export const BottomSheetSignIn = forwardRef<BottomSheetModalMethods, {}>((_props
   const snapPoints = ['70%'];
 
   useEffect(() => {
-    // Atualiza o estado do usuário se a autenticação mudar
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
     });
@@ -40,7 +38,6 @@ export const BottomSheetSignIn = forwardRef<BottomSheetModalMethods, {}>((_props
       const credential = GoogleAuthProvider.credential(id_token);
       signInWithCredential(auth, credential)
         .then(() => {
-          // Fecha o BottomSheet após o login
           (ref as any)?.current?.dismiss();
         })
         .catch((error) => {
@@ -49,23 +46,66 @@ export const BottomSheetSignIn = forwardRef<BottomSheetModalMethods, {}>((_props
     }
   }, [response]);
 
-  const renderBackdrop = React.useCallback(
-    (props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-      />
-    ),
-    []
-  );
+  const handleAppleLogin = async () => {
+    try {
+      const appleCredential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      const { identityToken } = appleCredential;
+
+      if (identityToken) {
+        const provider = new OAuthProvider('apple.com');
+        provider.addScope('email');
+        provider.addScope('name');
+        const credential = provider.credential({ idToken: identityToken });
+        const { user } = await signInWithCredential(auth, credential);
+      }
+    } catch (error: any) {
+      if (error.code !== 'ERR_CANCELED') {
+        alert(error.message);
+      }
+    }
+  };
+
+  const confirmDeleteAccount = () => {
+    Alert.alert(
+      "Confirmar exclusão",
+      "Tem certeza que deseja deletar sua conta?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Deletar", onPress: handleDeleteAccount, style: "destructive" },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  const handleDeleteAccount = async () => {
+    if (user) {
+      try {
+        await deleteUser(user);
+        setUser(null);
+        (ref as any)?.current?.dismiss();
+      } catch (error) {
+        console.error("Erro ao deletar conta:", error);
+      }
+    }
+  };
 
   return (
     <BottomSheetModal
       ref={ref}
       index={0}
       snapPoints={snapPoints}
-      backdropComponent={renderBackdrop}
+      backdropComponent={(props) => (
+        <BottomSheetBackdrop
+          {...props}
+          disappearsOnIndex={-1}
+          appearsOnIndex={0}
+        />
+      )}
     >
       <View className="flex-1 items-center pb-24">
         <View className="flex-1 items-center justify-center">
@@ -74,15 +114,20 @@ export const BottomSheetSignIn = forwardRef<BottomSheetModalMethods, {}>((_props
         </View>
 
         {user ? (
-          <Button
-            title="Sign Out"
-            bgColor={"bg-black"}
-            onPress={async () => {
-              await signOut(auth);
-              setUser(null); // Atualiza o estado do usuário
-              (ref as any)?.current?.dismiss(); // Fecha o BottomSheet
-            }}
-          />
+          <>
+            <Button
+              title="Sair"
+              onPress={async () => {
+                await signOut(auth);
+                setUser(null);
+                (ref as any)?.current?.dismiss();
+              }}
+            />
+            <Button
+              title="Deletar Conta"
+              onPress={confirmDeleteAccount}
+            />
+          </>
         ) : (
           <>
             <View className="flex-1 items-center justify-center">
@@ -96,7 +141,14 @@ export const BottomSheetSignIn = forwardRef<BottomSheetModalMethods, {}>((_props
               color={GoogleSigninButton.Color.Light}
               onPress={() => promptAsync()}
             />
-            <Text className="font-nunitoBold text-blue my-10">
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+              cornerRadius={5}
+              style={{ width: 200, height: 44, marginTop: 20 }}
+              onPress={handleAppleLogin}
+            />
+            <Text className="font-nunitoBold text-blue my-10" onPress={() => (ref as any)?.current?.dismiss()}>
               Talvez mais tarde
             </Text>
           </>

@@ -59,25 +59,37 @@ export const Card = forwardRef<TouchableOpacity, DesapegoProps>(
     return (
       <TouchableOpacity
         ref={ref}
-        className="w-52 border-solid border-2 drop-shadow-lg border-dark/30 items-center rounded-lg relative"
+        style={{
+          width: 200,
+          borderWidth: 2,
+          borderColor: 'rgba(0, 0, 0, 0.3)',
+          shadowColor: '#000',
+          padding: 5,
+          alignItems: 'center',
+          borderRadius: 10,
+        }}
         {...rest}
       >
         <Tag text={data.type} backgroundColor={getTagColor(data.type)} />
         <View className="pt-1 relative">
           <Image
             source={{ uri: data.imageUrl }}
-            className="w-48 h-44 rounded-t-lg"
-            style={{ zIndex: -1 }}  
+            className="w-52 h-44 rounded-t-lg"
+            style={{ zIndex: -1 }}
           />
           <View className="max-w-full">
-          <View>
-            <Text className=" font-nunitoBold text-blue mt-1">{data.title}</Text>
-            <Text className="text-green font-nunitoBold">há {distance ? `${distance.toFixed(1)} km` : '...'}</Text>    
-          </View>
-          <Text className="text-blue font-nunitoBold">{data.age}</Text>
-          <View className="w-44 mb-1">
-            <Text className="font-nunitoRegular">{data.description}</Text>
-          </View>
+            <View>
+              <Text className=" font-nunitoBold text-blue mt-1">{data.title}</Text>
+              <View className="flex justify-between">
+                <Text className="text-green font-nunitoBold">há {distance ? `${distance.toFixed(1)} km` : '...'}</Text>
+                <Text className="text-green font-nunitoBold">R${data.price}</Text>
+              </View>
+
+            </View>
+            <Text className="text-blue font-nunitoBold">{data.age}</Text>
+            <View className="w-44 mb-1">
+              <Text className="font-nunitoRegular">{data.description}</Text>
+            </View>
           </View>
         </View>
       </TouchableOpacity>

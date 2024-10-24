@@ -15,9 +15,29 @@
         "simulator": true
       }
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_API_KEY": "AIzaSyCCZ8API5fcu3nmUiNkF2o5KLlCF7SgJhY",
+        "EXPO_PUBLIC_AUTH_DOMAIN": "desapeguitos-419814.firebaseapp.com",
+        "EXPO_PUBLIC_PROJECT_ID": "desapeguitos-419814",
+        "EXPO_PUBLIC_STORAGE_BUCKET": "desapeguitos-419814.appspot.com",
+        "EXPO_PUBLIC_MESSAGING_SENDER_ID": "316769685627",
+        "EXPO_PUBLIC_APP_ID": "1:316769685627:web:a1f32d7109935b6cd892de",
+        "EXPO_PUBLIC_MEASUREMENT_ID": "G-K188XDVZ97",
+        "EXPO_PUBLIC_IOS_CLIENT_ID": "316769685627-7gpri0cnsvrhseiv0vugebn5hm35rqqc.apps.googleusercontent.com",
+        "EXPO_PUBLIC_ANDROID_CLIENT_ID": "316769685627-35ke4pogcink5rku41k7nq0jp3bn27ra.apps.googleusercontent.com",
+        "EXPO_PUBLIC_WEB_CLIENT_ID": "316769685627-spg1tcc80f07bg5kv88ql7e7ombln54m.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GEOCODING_API_KEY": "AIzaSyBYkBDkzWXNhn_HWoPhA2SlMgDGW8NPdkI"
+      }
+    }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "tamara.montijo@gmail.com",
+        "ascAppId": "6677038917",
+        "appleTeamId": "LM894VCW3V"
+      }
+    }
   }
 }

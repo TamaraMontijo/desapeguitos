@@ -8,8 +8,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "eas:ios": "eas build --platform ios",
-    "eas:simulator": "eas build --platform simulator"
+    "eas:ios": "eas build --platform ios"
   },
   "jest": {
     "preset": "jest-expo"
@@ -26,11 +25,13 @@
     "axios": "^1.6.8",
     "clsx": "^2.1.0",
     "expo": "~51.0.31",
+    "expo-apple-authentication": "^6.4.2",
     "expo-application": "~5.9.1",
     "expo-auth-session": "~5.5.2",
     "expo-crypto": "~13.0.2",
     "expo-dev-client": "~4.0.26",
     "expo-font": "~12.0.7",
+    "expo-image": "~1.13.0",
     "expo-image-picker": "~15.0.7",
     "expo-linear-gradient": "~13.0.2",
     "expo-linking": "~6.3.1",
@@ -41,6 +42,7 @@
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
     "firebase": "^10.12.2",
+    "firebase-admin": "^12.4.0",
     "lucide-react-native": "^0.367.0",
     "nativewind": "^4.0.1",
     "node": "^18.17.0",
@@ -48,6 +50,7 @@
     "react-dom": "18.2.0",
     "react-native": "0.74.5",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-gif": "^1.0.3",
     "react-native-ios-context-menu": "^2.5.1",
     "react-native-ios-utilities": "^4.4.5",
     "react-native-mask-text": "^0.14.2",
