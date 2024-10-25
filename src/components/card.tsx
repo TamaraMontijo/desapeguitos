@@ -56,18 +56,27 @@ export const Card = forwardRef<TouchableOpacity, DesapegoProps>(
           return '#000'; // fallback
       }
     };
+
     return (
-      <TouchableOpacity
+      <View
+      style={{
+        width: 200,
+        borderWidth: 2,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4.65,
+        elevation: 8,
+        padding: 5,
+        alignItems: 'center',
+        borderRadius: 10,
+        backgroundColor: '#fff', // Adicione um fundo branco para o card
+      }}
+      >
+         <TouchableOpacity
         ref={ref}
-        style={{
-          width: 200,
-          borderWidth: 2,
-          borderColor: 'rgba(0, 0, 0, 0.3)',
-          shadowColor: '#000',
-          padding: 5,
-          alignItems: 'center',
-          borderRadius: 10,
-        }}
+        
         {...rest}
       >
         <Tag text={data.type} backgroundColor={getTagColor(data.type)} />
@@ -79,12 +88,11 @@ export const Card = forwardRef<TouchableOpacity, DesapegoProps>(
           />
           <View className="max-w-full">
             <View>
-              <Text className=" font-nunitoBold text-blue mt-1">{data.title}</Text>
+              <Text className="font-nunitoBold text-blue mt-1">{data.title}</Text>
               <View className="flex justify-between flex-row">
                 <Text className="text-green font-nunitoBold">há {distance ? `${distance.toFixed(1)} km` : '...'}</Text>
                 <Text className="text-green font-nunitoBold">{data.price ? `R$ ${data.price}` : ''}</Text>
               </View>
-
             </View>
             <Text className="text-blue font-nunitoBold">{data.age}</Text>
             <View className="w-44 mb-1">
@@ -93,6 +101,8 @@ export const Card = forwardRef<TouchableOpacity, DesapegoProps>(
           </View>
         </View>
       </TouchableOpacity>
+      </View>
+     
     );
   }
 );

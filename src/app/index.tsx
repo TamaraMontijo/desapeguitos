@@ -165,6 +165,12 @@ export default function Home() {
         </View>
         {loading ? (
           <Loading />
+        ) : desapegos.length === 0 ? (
+          <View className="flex-1 items-center justify-center">
+            <Text className="text-center text-gray-600 font-nunitoBold">
+              Nenhum desapego encontrado. Convide seus amigos para o desapeguitos para aumentarmos o nosso acervo.
+            </Text>
+          </View>
         ) : (
           <FlatList
             data={desapegos}
@@ -185,6 +191,7 @@ export default function Home() {
             contentContainerStyle={{ gap: 12, paddingBottom: 150 }}
           />
         )}
+
       </View>
       <BottomSheetModalProvider>
         <BottomSheetSignIn ref={bottomSheetSignIn} />

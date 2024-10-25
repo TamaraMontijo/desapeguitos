@@ -187,15 +187,16 @@ export default function Layout() {
         <Tabs.Screen
           name="desapego/my-desapegos"
           options={{
-            tabBarLabel: "Meus Desapegos",
+            tabBarLabel: "Meus Desapeguitos",
             tabBarIcon: ({ color, size }) => <List color={color} size={size} />,
             headerStyle: {
               height: 120
             },
+            tabBarActiveTintColor: colors.primary[500],
             headerTitle: (props) => (
               <View className="flex-row items-center">
                 <Blocks size={22} color="white" />
-                <Text className=" ml-3 color-white font-nunitoBold text-2xl" >DESAPEGUITOS</Text>
+                <Text className=" ml-3 color-white font-nunitoBold text-2xl" >MEUS DESAPEGUITOS</Text>
               </View>
             ),
             headerTintColor: "white",
