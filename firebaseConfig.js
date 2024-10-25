@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_API_KEY,
@@ -14,6 +15,17 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+const auth = getAuth(app);
+
+// Monitorando o estado de autenticação do usuário e salvando no AsyncStorage
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    await AsyncStorage.setItem("userUID", user.uid); // Salva o UID do usuário autenticado
+  } else {
+    await AsyncStorage.removeItem("userUID"); // Remove UID se o usuário fizer logout
+  }
+});
+
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+export { auth };

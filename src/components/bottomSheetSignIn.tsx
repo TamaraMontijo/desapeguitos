@@ -7,26 +7,28 @@ import { Blocks } from "lucide-react-native";
 import { colors } from "@/styles/colors";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import * as Google from 'expo-auth-session/providers/google';
-import { GoogleAuthProvider, signInWithCredential, signOut, deleteUser, OAuthProvider } from "firebase/auth";
+import { GoogleAuthProvider, signInWithCredential, signOut, deleteUser, OAuthProvider, getAuth, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import * as AppleAuthentication from 'expo-apple-authentication';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export const BottomSheetSignIn = forwardRef<BottomSheetModalMethods, {}>((_props, ref: ForwardedRef<BottomSheetModalMethods>) => {
+  const auth = getAuth();
+  const [user, setUser] = useState(auth.currentUser);
+
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: process.env.EXPO_PUBLIC_ANDROID_CLIENT_ID,
     iosClientId: process.env.EXPO_PUBLIC_IOS_CLIENT_ID,
     webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID
   });
 
-  const [user, setUser] = useState(auth.currentUser);
-
   const snapPoints = ['70%'];
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
+    // Verifica o estado da sessão automaticamente ao iniciar
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
     });
 
     return () => unsubscribe();
@@ -136,7 +138,7 @@ export const BottomSheetSignIn = forwardRef<BottomSheetModalMethods, {}>((_props
               </Text>
             </View>
             <GoogleSigninButton
-              style={{ borderRadius: 10, width: 200 }}
+              style={{ borderRadius: 10, width: 220 }}
               size={GoogleSigninButton.Size.Wide}
               color={GoogleSigninButton.Color.Light}
               onPress={() => promptAsync()}
@@ -145,7 +147,7 @@ export const BottomSheetSignIn = forwardRef<BottomSheetModalMethods, {}>((_props
               buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
               buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
               cornerRadius={5}
-              style={{ width: 200, height: 44, marginTop: 20 }}
+              style={{ width: 220, height: 44, marginTop: 20 }}
               onPress={handleAppleLogin}
             />
             <Text className="font-nunitoBold text-blue my-10" onPress={() => (ref as any)?.current?.dismiss()}>

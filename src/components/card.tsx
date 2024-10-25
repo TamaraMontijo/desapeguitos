@@ -61,6 +61,7 @@ export const Card = forwardRef<TouchableOpacity, DesapegoProps>(
       <View
       style={{
         width: 200,
+        minHeight: 280,
         borderWidth: 2,
         borderColor: 'rgba(0, 0, 0, 0.1)',
         shadowColor: '#000',
@@ -71,7 +72,7 @@ export const Card = forwardRef<TouchableOpacity, DesapegoProps>(
         padding: 5,
         alignItems: 'center',
         borderRadius: 10,
-        backgroundColor: '#fff', // Adicione um fundo branco para o card
+        backgroundColor: '#fff',
       }}
       >
          <TouchableOpacity
